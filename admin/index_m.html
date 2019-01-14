@@ -26,7 +26,6 @@
 </style>
     <!-- you have to define 2 functions in the global scope: -->
     <script type="text/javascript">
-
         function load(settings, onChange) {
             if (!settings) return;
 
@@ -41,6 +40,7 @@
                 }
             }
 
+            let namespace = adapter + '.' + instance;
             let table_html = '';
 
             let ti = 0;
@@ -130,7 +130,7 @@
                 return false;
             });
 
-            $('.value, #rules-table').each(function () {
+            $('.value, #rules-table, #rules-active-table').each(function () {
                 var $key = $(this);
                 var id = $key.attr('id');
                 if ($key.attr('type') === 'checkbox') {
@@ -148,7 +148,6 @@
                 }
             });
 
-            let namespace = adapter + '.' + instance;
             table_html = '';
             let v_url = location.protocol + '//' + location.hostname+(location.port ? ':'+location.port: '');
             socket.emit('getObjectView', 'statemapping', 'state', {}, function (err, res) {
@@ -158,12 +157,12 @@
                         if (obj && obj.id && obj.value && obj.value.custom && obj.value.custom[namespace] && obj.value.custom[namespace].enabled) {
                             let custom = obj.value.custom[namespace];
                             table_html += '<tr>';
-                            table_html += '<td><a href="' + v_url + '/#tab-objects/customs/' + obj.id + '" target=_blank>' + obj.id + '</a></td>';
-                            table_html += '<td>' + getValue(custom.input) + '</td>';
-                            table_html += '<td>' + getValue(custom.output) + '</td>';
-                            table_html += '<td>' + getValue(custom.io) + '</td>';
-                            table_html += '<td>' + getValue(custom.rule) + '</td>';
-                            table_html += '<td>' + getValue(custom.correction) + '</td>';
+                            table_html += '<td id="id"><a href="' + v_url + '/#tab-objects/customs/' + obj.id + '" target=_blank>' + obj.id + '</a></td>';
+                            table_html += '<td id="input" contenteditable="true">' + getValue(custom.input) + '</td>';
+                            table_html += '<td id="output" contenteditable="true">' + getValue(custom.output) + '</td>';
+                            table_html += '<td id="io" contenteditable="true">' + getValue(custom.io) + '</td>';
+                            table_html += '<td id="rule" contenteditable="true">' + getValue(custom.rule) + '</td>';
+                            table_html += '<td id="correction" contenteditable="true">' + getValue(custom.correction) + '</td>';
                             table_html += '</tr>';
                         }
                     }
@@ -191,6 +190,8 @@
                 }
             });
 
+            let namespace = adapter + '.' + instance;
+
             let table_json = {};
             let oldRuleName = null;
             $('#rules-table tr').each(function () {
@@ -214,6 +215,26 @@
             });
 
             obj.rules = JSON.stringify(table_json);
+
+            //-------------------------------------------------------------------------
+            $('#rules-active-table tr').each(function () {
+                let id = $(this).find("td[id='id']").text();
+                if(id && id == 'javascript.1.test_number1') {
+                    let obj2 = { common: { custom: {} } };
+                    let custom = obj2.common.custom[namespace] = {};
+                    custom.input = $(this).find("td[id='input']").text();
+                    custom.output = $(this).find("td[id='output']").text();
+                    custom.io = $(this).find("td[id='io']").text();
+                    custom.rule = $(this).find("td[id='rule']").text();
+                    custom.correction = $(this).find("td[id='correction']").text();
+                    
+                    console.log(obj2);
+                    socket.emit('extendObject', id, obj2, function () {
+                        console.log('update id: ' + id);
+                    });
+                }
+            });
+
             callback(obj);
         }
 
