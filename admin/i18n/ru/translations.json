@@ -1,0 +1,12 @@
+{
+  "Auto": "Автоматически",
+  "Manual": "Вручную",
+  "on save adapter restarts with new config immediately": "При сохранении настроек адаптера он сразу же перезапускается",
+  "template adapter settings": "Пример",
+  "Mapping rules": "Правила преобразования",
+  "Add rule: ": "Добавить новое правило: ",
+  "Rule name": "Имя правила",
+  "Old state": "Старое значение",
+  "New state": "Новое значение",
+  "Operations": "Операции"
+}

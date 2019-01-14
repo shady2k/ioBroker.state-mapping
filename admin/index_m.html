@@ -1,0 +1,234 @@
+<html>
+<head>
+<!-- these 4 files always have to be included -->
+<link rel="stylesheet" type="text/css" href="../../lib/css/materialize.css">
+<link rel="stylesheet" type="text/css" href="../../css/adapter.css"/>
+
+<script type="text/javascript" src="../../lib/js/jquery-3.2.1.min.js"></script>
+<script type="text/javascript" src="../../socket.io/socket.io.js"></script>
+
+<!-- these files always have to be included -->
+<script type="text/javascript" src="../../js/translate.js"></script>
+<script type="text/javascript" src="../../lib/js/materialize.js"></script>
+<script type="text/javascript" src="../../js/adapter-settings.js"></script>
+<script type="text/javascript" src="words.js"></script>
+<style>
+    .m .col .select-wrapper+label {
+        top: -26px;
+    }
+    .m span{
+        font-size: 0.9em;
+    }
+    .mappingrules {
+        height: 100px !important;
+    }
+</style>
+<!-- you have to define 2 functions in the global scope: -->
+<script type="text/javascript">
+
+function load(settings, onChange) {
+    if (!settings) return;
+
+    let table_json = null;
+    if(settings.hasOwnProperty('rules')) {
+        try {
+            table_json = JSON.parse(settings.rules);
+        } catch(err) {
+            if(err) {
+                console.log(err);
+            }
+        }
+    }
+
+    let table_html = '';
+
+    let ti = 0;
+	for(var k in table_json) {
+        let k_cnt = Object.keys(table_json[k]).length;
+        table_html += '<tr><td id="ruleName" contenteditable="true" rowspan="' + k_cnt + '">' + k + '</td>';
+        let i = 0;
+        for(var k2 in table_json[k]) {
+            if(i > 0) table_html += '<tr>';
+            table_html += '<td id="oldState" contenteditable="true">'+k2+'</td>';
+            table_html += '<td id="newState" contenteditable="true">'+table_json[k][k2]+'</td>';
+            if(k_cnt == 1) {
+                table_html += "<td>";
+                table_html += '<a class="table-button-add btn-floating btn-small waves-effect waves-light"><i class="material-icons">add</i></a>';
+                table_html += '<a class="table-button-delete btn-floating btn-small waves-effect waves-light red"><i class="material-icons">delete</i></a>';
+                table_html += "</td>";
+            } else {
+                table_html += "<td>";
+                if(i == 0) {
+                    table_html += '<a class="table-button-add btn-floating btn-small waves-effect waves-light"><i class="material-icons">add</i></a>';
+                    table_html += '<a class="table-button-delete btn-floating btn-small waves-effect waves-light red disabled"><i class="material-icons">delete</i></a>';
+                } else {
+                    table_html += '<a class="table-button-delete btn-floating btn-small waves-effect waves-light red"><i class="material-icons">delete</i></a>';
+                }
+                table_html += "</td>";
+            }
+            table_html += '</tr>';
+            i++;
+        }
+        ti++;
+    }
+
+    $('#rules-table tbody').append(table_html);
+
+    $('#rules-container').find('.table-button-add-rule').on('click', function () {
+        let html = '<tr><td id="ruleName" rowspan="1" contenteditable="true"></td>';
+        html += '<td id="oldState" contenteditable="true"></td>';
+        html += '<td id="newState" contenteditable="true"></td>';
+        html += '<td><a class="table-button-delete btn-floating btn-small waves-effect waves-light red"><i class="material-icons">delete</i></a></td>';
+        html += '</tr>';
+        $('#rules-table tr:last').after(html);
+        onChange();
+    });
+
+    $("#rules-container").on("click", '.table-button-delete', function() {
+        let tr = $(this).closest('tr');
+        let ptr = tr;
+        while (ptr && !ptr.find('td:first[rowspan]').length > 0) {
+            ptr = ptr.prev();
+        }
+        tr.css("background-color","#FF3700");
+        tr.fadeOut(400, function(){
+            tr.remove();
+            let rc = ptr.find('td:first[rowspan]');
+            rc.attr('rowspan', function(i, rs) { return Number(rs) - 1; });
+            if(rc.attr('rowspan') <= 1) {
+                ptr.find('a.table-button-delete:first').removeClass("disabled");
+            }
+            onChange();
+        });
+        return false;
+    });
+
+    $("#rules-container").on("click", '.table-button-add', function() {
+        let html = '<tr>';
+        html += '<td id="oldState" contenteditable="true"></td>';
+        html += '<td id="newState" contenteditable="true"></td>';
+        html += '<td><a class="table-button-delete btn-floating btn-small waves-effect waves-light red"><i class="material-icons">delete</i></a></td>';
+        html += '</tr>';
+
+        let tr = $(this).closest('tr');
+        let ptr = tr;
+
+        while(ptr && !ptr.next().find('td:first[rowspan]').length > 0) {
+            if(!ptr.is(":last-child")) {
+                ptr = ptr.next();
+            } else {
+                break;
+            }
+        }
+
+        ptr.after(html);
+        let rc = tr.find('td:first[rowspan]');
+        rc.attr('rowspan', function(i, rs) { return Number(rs) + 1; });
+        onChange();
+
+        return false;
+    });
+
+    $('.value, #rules-table').each(function () {            
+        var $key = $(this);
+        var id = $key.attr('id');
+        if ($key.attr('type') === 'checkbox') {
+            // do not call onChange direct, because onChange could expect some arguments
+            $key.prop('checked', settings[id]).on('change', function() {
+                onChange();
+            });
+        } else {
+            // do not call onChange direct, because onChange could expect some arguments
+            $key.val(settings[id]).on('change', function() {
+                onChange();
+            }).on('keyup', function() {
+                onChange();
+            });
+        }
+    });
+
+    onChange(false);
+    M.updateTextFields();
+    M.updateTextFields('#rules-container');
+}
+
+function save(callback) {
+    var obj = {};
+    $('.value').each(function () {
+        var $this = $(this);
+        if ($this.attr('type') === 'checkbox') {
+            obj[$this.attr('id')] = $this.prop('checked');
+        } else {
+            obj[$this.attr('id')] = $this.val();
+        }
+    });
+
+    let table_json = {};
+    let oldRuleName = null;
+    $('#rules-table tr').each(function() {
+        let ruleName = $(this).find("td[id='ruleName']").text();
+        if(!ruleName && oldRuleName) {
+            ruleName = oldRuleName;
+        }
+        if(ruleName) {
+            oldRuleName = ruleName;
+            let oldState = $(this).find("td[id='oldState']").text();
+            let newState = $(this).find("td[id='newState']").text();
+            if(oldState && newState) {
+                if(!table_json.hasOwnProperty(ruleName)) {
+                    table_json[ruleName] = {};
+                }
+                let obj = {};
+                obj[oldState] = newState;
+                $.extend(table_json[ruleName], obj);
+            }
+        }
+    });
+
+    obj.rules = JSON.stringify(table_json);
+    callback(obj);
+}
+
+</script>
+</head>
+<body>
+    <div class="m adapter-container">
+        <div class="row">
+            <div class="row">
+                <div class="col s12">
+                    <ul class="tabs">
+                        <!-- <li class="tab col s3"><a href="#tab-main" class="translate active">Main settings</a></li> -->
+                        <li class="tab col s3"><a href="#tab-mapping-rules" class="translate active" id="messages">Mapping rules</a></li>
+                        <!--  <li class="tab col s3"><a href="#tab-active-rules" class="translate">Active rules</a></li> -->
+                    </ul>
+                </div>
+                <!--<div id="tab-main" class="col s12 page">
+                </div>-->
+                <div id="tab-mapping-rules" class="col s12 page">
+                    <!--<i class="material-icons prefix">mode_edit</i>
+                    <textarea id="rules" class="value materialize-textarea mappingrules"></textarea>
+                    <label for="rules">Message</label>-->
+                    <div id="rules-container">
+                        <span style="font-size: larger;" class="translate">Add rule: </span><a class="btn-floating waves-effect waves-light blue table-button-add-rule"><i class="material-icons">add</i></a>
+                        <table id="rules-table">
+                            <thead>
+                                <tr>
+                                    <th class="translate">Rule name</th>
+                                    <th class="translate">Old state</th>
+                                    <th class="translate">New state</th>
+                                    <th class="translate">Operations</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+                <!--<div id="tab-active-rules" class="col s12 page">
+
+                </div>-->
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
