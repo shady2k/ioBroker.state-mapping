@@ -1,0 +1,44 @@
+{
+  "name": "iobroker.state-mapping",
+  "version": "0.0.2",
+  "description": "State mapping",
+  "author": {
+    "name": "shady2k",
+    "email": "shady2k@gmail.com"
+  },
+  "contributors": [
+    {
+      "name": "shady2k",
+      "email": "shady2k@gmail.com"
+    }
+  ],
+  "homepage": "https://github.com/shady2k/ioBroker.state-mapping",
+  "license": "MIT",
+  "keywords": [
+    "ioBroker",
+    "state",
+    "mapping",
+    "Smart Home",
+    "home automation"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/shady2k/ioBroker.state-mapping"
+  },
+  "dependencies": {
+    "@iobroker/adapter-core": "^1.0.3"
+  },
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "mocha": "^4.1.0",
+    "chai": "^4.1.2"
+  },
+  "main": "main.js",
+  "scripts": {
+    "test": "node node_modules/mocha/bin/mocha --exit"
+  },
+  "bugs": {
+    "url": "https://github.com/shady2k/ioBroker.state-mapping/issues"
+  },
+  "readmeFilename": "README.md"
+}

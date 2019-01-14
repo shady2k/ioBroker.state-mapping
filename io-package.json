@@ -1,0 +1,60 @@
+{
+    "common": {
+        "name": "state-mapping",
+        "version": "0.0.2",
+        "news": {
+            "0.0.2": {
+                "en": "Added GUI for rules",
+                "de": "GUI für Regeln hinzugefügt",
+                "ru": "Добавлен графический интерфейс для правил"
+            },
+            "0.0.1": {
+                "en": "initial version",
+                "de": "Initiale Version",
+                "ru": "Первоначальная версия адаптера",
+                "pt": "Versão inicial",
+                "fr": "Version initiale",
+                "nl": "Eerste release"
+            }
+        },
+		"title": "State mapping",
+        "titleLang": {
+            "en": "State mapping"
+        },
+        "desc": {
+            "en": "This adapter allows you to copy updated value from one state to another using mapping rules.",
+            "de": "Mit diesem Adapter können Sie den aktualisierten Wert mithilfe von Mapping-Regeln von einem Status in einen anderen kopieren.",
+            "ru": "Этот адаптер позволяет копировать значение из одного объекта в другой с преобразованием."
+        },
+        "authors": [
+            "shady2k <shady2k@gmail.com>"
+        ],
+        "platform": "Javascript/Node.js",
+        "mode": "daemon",
+        "compact": true,
+        "icon": "state-mapping.png",
+        "supportCustoms": true,
+        "materialize": true,
+        "enabled": true,
+        "extIcon": "https://raw.githubusercontent.com/shady2k/ioBroker.state-mapping/master/admin/state-mapping.png",
+        "keywords": ["state", "mapping", "logic", "script"],
+        "readme": "https://github.com/shady2k/ioBroker.state-mapping/blob/master/README.md",
+        "loglevel": "info",
+        "type": "logic",
+        "license": "MIT",
+        "messagebox": false,
+        "stopTimeout": 5000
+    },
+    "native": {},
+    "objects": [
+        {
+            "_id": "_design/statemapping",
+            "language": "javascript",
+            "views": {
+                "state": {
+                    "map": "function (doc) { if (doc.type == 'state' && doc.common.custom) emit(doc._id, doc.common); }"
+                }
+            }
+        }
+    ]
+}
