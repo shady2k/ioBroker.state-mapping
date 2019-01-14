@@ -9,5 +9,11 @@
   "Rule name": "Regelname",
   "Old state": "Alter Zustand",
   "New state": "Neuer Staat",
-  "Operations": "Operationen"
+  "Operations": "Operationen",
+  "ID": "ID",
+  "Input": "Eingang",
+  "Output": "Ausgabe",
+  "Input and output": "Eingabe und Ausgabe",
+  "Rule": "Regel",
+  "Correction": "Korrektur"
 }

@@ -1,8 +1,13 @@
 {
     "common": {
         "name": "state-mapping",
-        "version": "0.0.2",
+        "version": "0.0.3",
         "news": {
+            "0.0.3": {
+                "en": "Added GUI for active rules",
+                "de": "GUI für aktive Regeln hinzugefügt",
+                "ru": "Добавлен графический интерфейс для активных правил"
+            },
             "0.0.2": {
                 "en": "Added GUI for rules",
                 "de": "GUI für Regeln hinzugefügt",
@@ -17,7 +22,7 @@
                 "nl": "Eerste release"
             }
         },
-		"title": "State mapping",
+        "title": "State mapping",
         "titleLang": {
             "en": "State mapping"
         },
@@ -37,7 +42,12 @@
         "materialize": true,
         "enabled": true,
         "extIcon": "https://raw.githubusercontent.com/shady2k/ioBroker.state-mapping/master/admin/state-mapping.png",
-        "keywords": ["state", "mapping", "logic", "script"],
+        "keywords": [
+            "state",
+            "mapping",
+            "logic",
+            "script"
+        ],
         "readme": "https://github.com/shady2k/ioBroker.state-mapping/blob/master/README.md",
         "loglevel": "info",
         "type": "logic",

@@ -15,4 +15,10 @@ systemDictionary = {
     "Old state": {                                   "de": "Alter Zustand",                                   "ru": "Старое значение"},
     "New state": {                                   "de": "Neuer Staat",                                     "ru": "Новое значение"},
     "Operations": {                                  "de": "Operationen",                                     "ru": "Операции"},
+    "ID": {                                          "de": "ID",                                              "ru": "ID"},
+    "Input": {                                       "de": "Eingang",                                         "ru": "Откуда копировать"},
+    "Output": {                                      "de": "Ausgabe",                                         "ru": "Куда копировать"},
+    "Input and output": {                            "de": "Eingabe und Ausgabe",                             "ru": "Двустороннее копирование"},
+    "Rule": {                                        "de": "Regel",                                           "ru": "Правило"},
+    "Correction": {                                  "de": "Korrektur",                                       "ru": "Коррекция"},
 };
