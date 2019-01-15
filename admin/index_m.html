@@ -28,6 +28,8 @@
     <script type="text/javascript">
         function load(settings, onChange) {
             if (!settings) return;
+            
+            var namespace = adapter + '.' + instance;
 
             let table_json = null;
             if (settings.hasOwnProperty('rules')) {
@@ -40,15 +42,14 @@
                 }
             }
 
-            let namespace = adapter + '.' + instance;
             let table_html = '';
 
             let ti = 0;
-            for (var k in table_json) {
+            for (let k in table_json) {
                 let k_cnt = Object.keys(table_json[k]).length;
                 table_html += '<tr><td id="ruleName" contenteditable="true" rowspan="' + k_cnt + '">' + k + '</td>';
                 let i = 0;
-                for (var k2 in table_json[k]) {
+                for (let k2 in table_json[k]) {
                     if (i > 0) table_html += '<tr>';
                     table_html += '<td id="oldState" contenteditable="true">' + k2 + '</td>';
                     table_html += '<td id="newState" contenteditable="true">' + table_json[k][k2] + '</td>';
@@ -130,9 +131,11 @@
                 return false;
             });
 
+
+            // Active rules tab
             $('.value, #rules-table, #rules-active-table').each(function () {
-                var $key = $(this);
-                var id = $key.attr('id');
+                let $key = $(this);
+                let id = $key.attr('id');
                 if ($key.attr('type') === 'checkbox') {
                     // do not call onChange direct, because onChange could expect some arguments
                     $key.prop('checked', settings[id]).on('change', function () {
@@ -148,31 +151,96 @@
                 }
             });
 
-            table_html = '';
-            let v_url = location.protocol + '//' + location.hostname+(location.port ? ':'+location.port: '');
-            socket.emit('getObjectView', 'statemapping', 'state', {}, function (err, res) {
-                if (!err && res) {
-                    for (var i = 0; i < res.rows.length; i++) {
-                        var obj = res.rows[i];
-                        if (obj && obj.id && obj.value && obj.value.custom && obj.value.custom[namespace] && obj.value.custom[namespace].enabled) {
-                            let custom = obj.value.custom[namespace];
-                            table_html += '<tr>';
-                            table_html += '<td id="id"><a href="' + v_url + '/#tab-objects/customs/' + obj.id + '" target=_blank>' + obj.id + '</a></td>';
-                            table_html += '<td id="input" contenteditable="true">' + getValue(custom.input) + '</td>';
-                            table_html += '<td id="output" contenteditable="true">' + getValue(custom.output) + '</td>';
-                            table_html += '<td id="io" contenteditable="true">' + getValue(custom.io) + '</td>';
-                            table_html += '<td id="rule" contenteditable="true">' + getValue(custom.rule) + '</td>';
-                            table_html += '<td id="correction" contenteditable="true">' + getValue(custom.correction) + '</td>';
-                            table_html += '</tr>';
-                        }
-                    }
+            $('#rules-active-container').find('.table-button-add-object').on('click', function () {
+                    let table_html = '<tr>';
+                    table_html += '<td id="id" contenteditable="true"></td>';
+                    table_html += '<td><input id="enabled" style="width: 40px" class="filled-in" type="checkbox" checked><span></span></td>';
+                    table_html += '<td id="input" contenteditable="true"></td>';
+                    table_html += '<td id="output" contenteditable="true"></td>';
+                    table_html += '<td id="io" contenteditable="true"></td>';
+                    table_html += '<td id="rule" contenteditable="true"></td>';
+                    table_html += '<td id="correction" contenteditable="true"></td>';
+                    table_html += '<td><a class="table-button-delete btn-floating btn-small waves-effect waves-light red"><i class="material-icons">delete</i></a></td>';
+                    table_html += '</tr>';
+                $('#rules-active-table tr:last').after(table_html);
+                onChange();
+            });
+
+            $("#rules-active-container").on("click", '.table-button-delete', function () {
+                let tr = $(this).closest('tr');
+                let id = tr.find("td[id='id']").text();
+                if(id) {
+                    tr.css("background-color", "#FF3700");
+                    tr.fadeOut(400, function () {
+                        onChange();
+                            /*let obj2 = { common: { custom: {} } };
+                            let custom = obj2.common.custom[namespace] = {};
+
+                            socket.emit('extendObject', id, obj2, function () {
+                                console.log('delete id: ' + id);
+                            });*/
+                            //tr.remove();
+                    });
                 }
-                res = null;
-                $('#rules-active-table tbody').append(table_html);
+                return false;
+            });
+
+            getObjects(function(err, res) {
+                if(err) {
+                    console.log(err);
+                } else {
+                    updateActiveRules(namespace, res);
+                }
             });
 
             onChange(false);
             M.updateTextFields();
+        }
+
+        function updateActiveRules(namespace, res) {
+            let v_url = location.protocol + '//' + location.hostname+(location.port ? ':'+location.port: '');
+            let table_html = '';
+
+            for (let i = 0; i < res.rows.length; i++) {
+                let obj = res.rows[i];
+                if (obj && obj.id && obj.value && obj.value.custom && obj.value.custom[namespace]) { /*&& obj.value.custom[namespace].enabled*/
+                    let custom = obj.value.custom[namespace];
+                    table_html += '<tr>';
+                    table_html += '<td id="id"><a href="' + v_url + '/#tab-objects/customs/' + obj.id + '" target=_blank>' + obj.id + '</a></td>';
+                    let enabled = getValue(custom.enabled);
+                    if(enabled) {
+                        table_html += '<td><input id="enabled" style="width: 40px" class="filled-in" type="checkbox" checked><span></span></td>';
+                    } else {
+                        table_html += '<td><input id="enabled" style="width: 40px" class="filled-in" type="checkbox"><span></span></td>';
+                    }
+                    table_html += '<td id="input" contenteditable="true">' + getValue(custom.input) + '</td>';
+                    table_html += '<td id="output" contenteditable="true">' + getValue(custom.output) + '</td>';
+                    table_html += '<td id="io" contenteditable="true">' + getValue(custom.io) + '</td>';
+                    table_html += '<td id="rule" contenteditable="true">' + getValue(custom.rule) + '</td>';
+                    table_html += '<td id="correction" contenteditable="true">' + getValue(custom.correction) + '</td>';
+                    table_html += '<td><a class="table-button-delete btn-floating btn-small waves-effect waves-light red"><i class="material-icons">delete</i></a></td>';
+                    table_html += '</tr>';
+                }
+            }
+
+            $('#rules-active-table tbody').append(table_html);
+
+            $('#rules-active-container').on('click', 'input[type="checkbox"]+span', function () {
+                let $input = $(this).prev();
+                if (!$input.prop('disabled')) {
+                    $input.prop('checked', !$input.prop('checked')).trigger('change');
+                }
+            });
+        }
+
+        function getObjects(callback) {
+            socket.emit('getObjectView', 'statemapping', 'state', {}, function (err, res) {
+                if (!err && res) {
+                    callback(null, res);
+                    return;
+                }
+                callback(err);
+            });
         }
 
         function getValue(value) {
@@ -180,17 +248,17 @@
         }
 
         function save(callback) {
-            var obj = {};
+            let obj = {};
+            var namespace = adapter + '.' + instance;
+
             $('.value').each(function () {
-                var $this = $(this);
+                let $this = $(this);
                 if ($this.attr('type') === 'checkbox') {
                     obj[$this.attr('id')] = $this.prop('checked');
                 } else {
                     obj[$this.attr('id')] = $this.val();
                 }
             });
-
-            let namespace = adapter + '.' + instance;
 
             let table_json = {};
             let oldRuleName = null;
@@ -216,26 +284,73 @@
 
             obj.rules = JSON.stringify(table_json);
 
-            //-------------------------------------------------------------------------
-            $('#rules-active-table tr').each(function () {
-                let id = $(this).find("td[id='id']").text();
-                if(id && id == 'javascript.1.test_number1') {
-                    let obj2 = { common: { custom: {} } };
-                    let custom = obj2.common.custom[namespace] = {};
-                    custom.input = $(this).find("td[id='input']").text();
-                    custom.output = $(this).find("td[id='output']").text();
-                    custom.io = $(this).find("td[id='io']").text();
-                    custom.rule = $(this).find("td[id='rule']").text();
-                    custom.correction = $(this).find("td[id='correction']").text();
-                    
-                    console.log(obj2);
-                    socket.emit('extendObject', id, obj2, function () {
-                        console.log('update id: ' + id);
-                    });
+            getObjects(function(err, res) {
+                if(err) {
+                    console.log(err);
+                } else {
+                    saveObjects(namespace, res);
                 }
             });
 
             callback(obj);
+        }
+
+         function saveObjects(namespace, res) {
+            let objects = {};
+            for (let i = 0; i < res.rows.length; i++) {
+                let obj = res.rows[i];
+                if (obj && obj.id) {
+                    objects[obj.id] = obj;
+                }
+            }
+
+            $('#rules-active-table tr').each(function () {
+                 let id = $(this).find("td[id='id']").text();
+                 if (id && objects.hasOwnProperty(id)) {
+                    //console.log(id);
+                     if ($(this).css('display') != 'none') {
+                         let obj2 = { common: { custom: {} } };
+                         let custom = obj2.common.custom[namespace] = {};
+                         let enabled = $(this).find("input[id='enabled']").prop('checked');
+                         custom.enabled = enabled === true;
+                         custom.input = $(this).find("td[id='input']").text();
+                         custom.output = $(this).find("td[id='output']").text();
+                         custom.io = $(this).find("td[id='io']").text();
+                         custom.rule = $(this).find("td[id='rule']").text();
+                         custom.correction = $(this).find("td[id='correction']").text();
+
+                         let isSame = true;
+                         let obj_now = objects[id].value;
+                         if (obj_now.hasOwnProperty('custom') && obj_now.custom.hasOwnProperty(namespace)) {
+                             let custom_now = objects[id].value.custom[namespace];
+                             for (let k in custom) {
+                                 if (custom.hasOwnProperty(k) && custom_now.hasOwnProperty(k)) {
+                                     if (custom[k] != custom_now[k]) {
+                                         isSame = false;
+                                         break;
+                                     }
+                                 }
+                             }
+                         } else {
+                             isSame = false;
+                         }
+
+                         if (!isSame) {
+                             socket.emit('extendObject', id, obj2, function () {
+                                 //console.log('update id: ' + id);
+                             });
+                         }
+                     } else {
+                        let obj = objects[id];
+                        obj.common = obj.value;
+                        delete obj['value'];
+                        delete obj.common.custom[namespace];
+                        socket.emit('setObject', id, obj, function () {
+                            //console.log('setObject id: ' + id);
+                        });
+                     }
+                 }
+             });
         }
 
     </script>
@@ -260,8 +375,8 @@
                     <label for="rules">Message</label>-->
                     <div id="rules-container">
                         <br/>
-                        <span style="font-size: larger;" class="translate">Add rule: </span><a class="btn-floating waves-effect waves-light blue table-button-add-rule"><i
-                                class="material-icons">add</i></a>
+                        <span style="font-size: larger;" class="translate">Add rule: </span><a class="btn-floating waves-effect waves-light blue table-button-add-rule">
+                            <i class="material-icons">add</i></a>
                         <table id="rules-table">
                             <thead>
                                 <tr>
@@ -277,15 +392,20 @@
                 </div>
                 <div id="tab-active-rules" class="col s12 page">
                     <div id="rules-active-container">
+                            <br/>
+                            <span style="font-size: larger;" class="translate">Add object: </span><a class="btn-floating waves-effect waves-light blue table-button-add-object">
+                                <i class="material-icons">add</i></a>
                         <table id="rules-active-table">
                             <thead>
                                 <tr>
                                     <th class="translate">ID</th>
+                                    <th class="translate">Enabled</th>
                                     <th class="translate">Input</th>
                                     <th class="translate">Output</th>
                                     <th class="translate">Input and output</th>
                                     <th class="translate">Rule</th>
                                     <th class="translate">Correction</th>
+                                    <th class="translate">Operations</th>
                                 </tr>
                             </thead>
                             <tbody></tbody>

@@ -62,7 +62,7 @@
             "language": "javascript",
             "views": {
                 "state": {
-                    "map": "function (doc) { if (doc.type == 'state' && doc.common.custom) emit(doc._id, doc.common); }"
+                    "map": "function (doc) { if (doc.type == 'state' && doc.common) emit(doc._id, doc.common); }"
                 }
             }
         }
