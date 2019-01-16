@@ -2,6 +2,11 @@
 ioBroker state mapping adapter
 ==============
 
+[![NPM version](http://img.shields.io/npm/v/iobroker.state-mapping.svg)](https://www.npmjs.com/package/iobroker.state-mapping)
+[![Downloads](https://img.shields.io/npm/dm/iobroker.state-mapping.svg)](https://www.npmjs.com/package/iobroker.state-mapping)
+
+[![NPM](https://nodei.co/npm/iobroker.state-mapping.png?downloads=true)](https://nodei.co/npm/iobroker.state-mapping/)
+
 # Copy state from/to another state
 
 This adapter allows you to copy updated value from one state to another.
