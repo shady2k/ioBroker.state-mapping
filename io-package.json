@@ -1,8 +1,13 @@
 {
     "common": {
         "name": "state-mapping",
-        "version": "0.0.3",
+        "version": "0.0.4",
         "news": {
+            "0.0.4": {
+                "en": "Active rules GUI improvement",
+                "de": "GUI-Verbesserung für aktive Regeln",
+                "ru": "Улучшение графического интерфейса для активных правил"
+            },
             "0.0.3": {
                 "en": "Added GUI for active rules",
                 "de": "GUI für aktive Regeln hinzugefügt",
