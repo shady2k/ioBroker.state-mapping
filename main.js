@@ -114,23 +114,27 @@ function addToObjects(id, obj) {
         }
     }
 
-    if(custom.input) {
-        if(!dict_in.hasOwnProperty(custom.input)) {
-            dict_in[custom.input] = { 'id': id, 'rule': rule, 'correction': correction };
-        }
-    } else if(custom.output) {
-        if(!dict_out.hasOwnProperty(id)) {
-            dict_out[id] = { 'id': custom.output, 'rule': rule, 'correction': correction * -1 };
-        }
-    } else if(custom.io) {
-        if(!dict_in.hasOwnProperty(custom.io)) {
-            dict_in[custom.io] = { 'id': id, 'rule': rule, 'correction': correction };
-        }
-        if(!dict_out.hasOwnProperty(custom.io)) {
-            dict_out[id] = { 'id': custom.io, 'rule': rule, 'correction': correction * -1 };
-        }
+    if(custom.input || custom.output) {
+        if(custom.input) {
+            if(!dict_in.hasOwnProperty(custom.input)) {
+                dict_in[custom.input] = { 'id': id, 'rule': rule, 'correction': correction };
+            }
+        } 
+        
+        if(custom.output) {
+            if(!dict_out.hasOwnProperty(id)) {
+                dict_out[id] = { 'id': custom.output, 'rule': rule, 'correction': correction * -1 };
+            }
+        } 
     } else {
-        return;
+        if(custom.io) {
+            if(!dict_in.hasOwnProperty(custom.io)) {
+                dict_in[custom.io] = { 'id': id, 'rule': rule, 'correction': correction };
+            }
+            if(!dict_out.hasOwnProperty(custom.io)) {
+                dict_out[id] = { 'id': custom.io, 'rule': rule, 'correction': correction * -1 };
+            }
+        }
     }
 }
 
@@ -175,7 +179,8 @@ function t_setState(v_id, v_value, v_ack, v_rule, v_correction) {
     if(v_correction && !isNaN(v_correction) && v_correction != 0) {
         let floatVal = parseFloat(v_value);
         if (!isNaN(floatVal)) {
-            let new_value = floatVal + v_correction;
+            let new_value = floatVal + Number(v_correction);
+            new_value = Math.round(new_value * 100) / 100;
             adapter.log.debug('Replace value for ' + v_id + ' from: ' + v_value + ' to: ' + new_value);
             v_value = new_value;
         } else {
@@ -183,7 +188,10 @@ function t_setState(v_id, v_value, v_ack, v_rule, v_correction) {
         }
     }
 
-    adapter.log.info('Update ' + v_id + ' to: ' + v_value + ', ack = ' + v_ack);
+    if(v_value == 'true') v_value = true;
+    if(v_value == 'false') v_value = false;
+
+    adapter.log.debug('Update ' + v_id + ' to: ' + v_value + ', ack = ' + v_ack);
     adapter.setForeignState(v_id, {val: v_value, ack: v_ack}, function(err) {
         if(err) {
             adapter.log.warn('Problem with update: ' + v_id);
