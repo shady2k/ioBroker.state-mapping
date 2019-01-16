@@ -13,6 +13,9 @@
     <script type="text/javascript" src="../../lib/js/materialize.js"></script>
     <script type="text/javascript" src="../../js/adapter-settings.js"></script>
     <script type="text/javascript" src="words.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="static/css/jquery-ui.min.css" />
+    <script type="text/javascript" src="static/js/jquery-ui.min.js"></script>
     <style>
         .m .col .select-wrapper+label {
         top: -26px;
@@ -26,6 +29,9 @@
 </style>
     <!-- you have to define 2 functions in the global scope: -->
     <script type="text/javascript">
+        var ids_arr = [];
+        var rules_arr = [];
+
         function load(settings, onChange) {
             if (!settings) return;
             
@@ -43,11 +49,14 @@
             }
 
             let table_html = '';
+            rules_arr = [];
 
             let ti = 0;
             for (let k in table_json) {
                 let k_cnt = Object.keys(table_json[k]).length;
                 table_html += '<tr><td id="ruleName" contenteditable="true" rowspan="' + k_cnt + '">' + k + '</td>';
+                rules_arr.push(k);
+
                 let i = 0;
                 for (let k2 in table_json[k]) {
                     if (i > 0) table_html += '<tr>';
@@ -73,6 +82,8 @@
                 }
                 ti++;
             }
+
+            $("#rules-active-table td[id='rule']").autocomplete( "option", "source", rules_arr);
 
             $('#rules-table tbody').append(table_html);
 
@@ -163,6 +174,28 @@
                     table_html += '<td><a class="table-button-delete btn-floating btn-small waves-effect waves-light red"><i class="material-icons">delete</i></a></td>';
                     table_html += '</tr>';
                 $('#rules-active-table tr:last').after(table_html);
+
+                $("#rules-active-table td[id='id']").autocomplete({
+                    source: function(request, response) {
+                        var results = $.ui.autocomplete.filter(ids_arr, request.term);
+                        response(results.slice(0, 10));
+                    }
+                });
+
+                $("#rules-active-table td[id='rule']").autocomplete({
+                    source: function(request, response) {
+                        var results = $.ui.autocomplete.filter(rules_arr, request.term);
+                        response(results.slice(0, 10));
+                    }
+                });
+
+                $("#rules-active-table td[id='input'], #rules-active-table td[id='output'], #rules-active-table td[id='io']").autocomplete({
+                    source: function(request, response) {
+                        var results = $.ui.autocomplete.filter(ids_arr, request.term);
+                        response(results.slice(0, 10));
+                    }
+                });
+
                 onChange();
             });
 
@@ -200,9 +233,15 @@
         function updateActiveRules(namespace, res) {
             let v_url = location.protocol + '//' + location.hostname+(location.port ? ':'+location.port: '');
             let table_html = '';
+            ids_arr = [];
 
             for (let i = 0; i < res.rows.length; i++) {
                 let obj = res.rows[i];
+                
+                if (obj && obj.id) {
+                    ids_arr.push(obj.id);
+                }
+
                 if (obj && obj.id && obj.value && obj.value.custom && obj.value.custom[namespace]) { /*&& obj.value.custom[namespace].enabled*/
                     let custom = obj.value.custom[namespace];
                     table_html += '<tr>';
@@ -229,6 +268,20 @@
                 let $input = $(this).prev();
                 if (!$input.prop('disabled')) {
                     $input.prop('checked', !$input.prop('checked')).trigger('change');
+                }
+            });
+
+            $("#rules-active-table td[id='rule']").autocomplete({
+                source: function(request, response) {
+                    var results = $.ui.autocomplete.filter(rules_arr, request.term);
+                    response(results.slice(0, 10));
+                }
+            });
+
+            $("#rules-active-table td[id='input'], #rules-active-table td[id='output'], #rules-active-table td[id='io']").autocomplete({
+                source: function(request, response) {
+                    var results = $.ui.autocomplete.filter(ids_arr, request.term);
+                    response(results.slice(0, 10));
                 }
             });
         }
