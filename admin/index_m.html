@@ -66,17 +66,23 @@
             rules_arr = [];
 
             let ti = 0;
-            for (let k in table_json) {
-                let k_cnt = Object.keys(table_json[k]).length;
-                table_html += '<tr><td id="ruleName" contenteditable="true" rowspan="' + k_cnt + '">' + k + '</td>';
-                rules_arr.push(k);
-
+            for (let rule_name in table_json) {
+                rules_arr.push(rule_name);
+                let rule = table_json[rule_name];
+                let mappings = rule.mapping;
+                let mappings_cnt = Object.keys(mappings).length;
+                if(mappings_cnt == 0) mappings_cnt++;
+                table_html += '<tr><td id="ruleName" contenteditable="true" rowspan="' + mappings_cnt + '">' + rule_name + '</td>';
+                table_html += '<td id="min" contenteditable="true" rowspan="' + mappings_cnt + '">'+ rule.min +'</td>';
+                table_html += '<td id="max" contenteditable="true" rowspan="' + mappings_cnt + '">'+ rule.max +'</td>';
+                table_html += '<td id="deviation" contenteditable="true" rowspan="' + mappings_cnt + '">'+ rule.deviation +'</td>';
+                
                 let i = 0;
-                for (let k2 in table_json[k]) {
+                for (let mapping in mappings) {
                     if (i > 0) table_html += '<tr>';
-                    table_html += '<td id="oldState" contenteditable="true">' + k2 + '</td>';
-                    table_html += '<td id="newState" contenteditable="true">' + table_json[k][k2] + '</td>';
-                    if (k_cnt == 1) {
+                    table_html += '<td id="oldState" contenteditable="true">' + mapping + '</td>';
+                    table_html += '<td id="newState" contenteditable="true">' + mappings[mapping] + '</td>';
+                    if (mappings_cnt == 1) {
                         table_html += "<td>";
                         table_html += '<a class="table-button-add btn-floating btn-small waves-effect waves-light"><i class="material-icons">add</i></a>';
                         table_html += '<a class="table-button-delete btn-floating btn-small waves-effect waves-light red"><i class="material-icons">delete</i></a>';
@@ -94,6 +100,14 @@
                     table_html += '</tr>';
                     i++;
                 }
+                if(i == 0) {
+                    table_html += '<td id="oldState" contenteditable="true"></td>';
+                    table_html += '<td id="newState" contenteditable="true"></td>';
+                    table_html += "<td>";
+                    table_html += '<a class="table-button-add btn-floating btn-small waves-effect waves-light"><i class="material-icons">add</i></a>';
+                    table_html += '<a class="table-button-delete btn-floating btn-small waves-effect waves-light red"><i class="material-icons">delete</i></a>';
+                    table_html += "</td></tr>";
+                }
                 ti++;
             }
 
@@ -103,9 +117,15 @@
 
             $('#rules-container').find('.table-button-add-rule').on('click', function () {
                 let html = '<tr><td id="ruleName" rowspan="1" contenteditable="true"></td>';
+                html += '<td id="min" contenteditable="true" rowspan="1"></td>';
+                html += '<td id="max" contenteditable="true" rowspan="1"></td>';
+                html += '<td id="deviation" contenteditable="true" rowspan="1"></td>';
                 html += '<td id="oldState" contenteditable="true"></td>';
                 html += '<td id="newState" contenteditable="true"></td>';
-                html += '<td><a class="table-button-delete btn-floating btn-small waves-effect waves-light red"><i class="material-icons">delete</i></a></td>';
+                html += '<td>';
+                html += '<a class="table-button-add btn-floating btn-small waves-effect waves-light"><i class="material-icons">add</i></a>';
+                html += '<a class="table-button-delete btn-floating btn-small waves-effect waves-light red"><i class="material-icons">delete</i></a>';
+                html += '</td>';
                 html += '</tr>';
                 $('#rules-table tr:last').after(html);
                 onChange();
@@ -120,7 +140,7 @@
                 tr.css("background-color", "#FF3700");
                 tr.fadeOut(400, function () {
                     tr.remove();
-                    let rc = ptr.find('td:first[rowspan]');
+                    let rc = ptr.find('td[rowspan]');
                     rc.attr('rowspan', function (i, rs) { return Number(rs) - 1; });
                     if (rc.attr('rowspan') <= 1) {
                         ptr.find('a.table-button-delete:first').removeClass("disabled");
@@ -149,7 +169,7 @@
                 }
 
                 ptr.after(html);
-                let rc = tr.find('td:first[rowspan]');
+                let rc = tr.find('td[rowspan]');
                 rc.attr('rowspan', function (i, rs) { return Number(rs) + 1; });
                 onChange();
 
@@ -316,55 +336,7 @@
             if (value) return value; else return '';
         }
 
-        function save(callback) {
-            let obj = {};
-            var namespace = adapter + '.' + instance;
-
-            $('.value').each(function () {
-                let $this = $(this);
-                if ($this.attr('type') === 'checkbox') {
-                    obj[$this.attr('id')] = $this.prop('checked');
-                } else {
-                    obj[$this.attr('id')] = $this.val();
-                }
-            });
-
-            let table_json = {};
-            let oldRuleName = null;
-            $('#rules-table tr').each(function () {
-                let ruleName = $(this).find("td[id='ruleName']").text();
-                if (!ruleName && oldRuleName) {
-                    ruleName = oldRuleName;
-                }
-                if (ruleName) {
-                    oldRuleName = ruleName;
-                    let oldState = $(this).find("td[id='oldState']").text();
-                    let newState = $(this).find("td[id='newState']").text();
-                    if (oldState && newState) {
-                        if (!table_json.hasOwnProperty(ruleName)) {
-                            table_json[ruleName] = {};
-                        }
-                        let obj = {};
-                        obj[oldState] = newState;
-                        $.extend(table_json[ruleName], obj);
-                    }
-                }
-            });
-
-            obj.rules = JSON.stringify(table_json);
-
-            getObjects(function(err, res) {
-                if(err) {
-                    console.log(err);
-                } else {
-                    saveObjects(namespace, res);
-                }
-            });
-
-            callback(obj);
-        }
-
-         function saveObjects(namespace, res) {
+        function saveObjects(namespace, res) {
             let objects = {};
             for (let i = 0; i < res.rows.length; i++) {
                 let obj = res.rows[i];
@@ -423,6 +395,62 @@
              });
         }
 
+        function save(callback) {
+            let obj = {};
+            var namespace = adapter + '.' + instance;
+
+            $('.value').each(function () {
+                let $this = $(this);
+                if ($this.attr('type') === 'checkbox') {
+                    obj[$this.attr('id')] = $this.prop('checked');
+                } else {
+                    obj[$this.attr('id')] = $this.val();
+                }
+            });
+
+            let table_json = {};
+            let oldRuleName = null;
+            $('#rules-table tr').each(function () {
+                let ruleName = $(this).find("td[id='ruleName']").text();
+                if (!ruleName && oldRuleName) {
+                    ruleName = oldRuleName;
+                }
+                if (ruleName) {
+                    oldRuleName = ruleName;
+                    let vmin = $(this).find("td[id='min']").text();
+                    let vmax = $(this).find("td[id='max']").text();
+                    let vdeviation = $(this).find("td[id='deviation']").text();
+                    let oldState = $(this).find("td[id='oldState']").text();
+                    let newState = $(this).find("td[id='newState']").text();
+
+                    if (!table_json.hasOwnProperty(ruleName)) {
+                        table_json[ruleName] = {};
+                        table_json[ruleName].min = vmin;
+                        table_json[ruleName].max = vmax;
+                        table_json[ruleName].deviation = vdeviation;
+                        table_json[ruleName].mapping = {};
+                    }
+                    
+                    if (oldState && newState) {
+                        let obj = {};
+                        obj[oldState] = newState;
+                        $.extend(table_json[ruleName].mapping, obj);
+                    }
+                }
+            });
+
+            obj.rules = JSON.stringify(table_json);
+
+            getObjects(function(err, res) {
+                if(err) {
+                    console.log(err);
+                } else {
+                    saveObjects(namespace, res);
+                }
+            });
+
+            callback(obj);
+        }
     </script>
 </head>
 
@@ -433,8 +461,8 @@
                 <div class="col s12">
                     <ul class="tabs">
                         <!--<li class="tab col s3"><a href="#tab-main" class="translate active">Main settings</a></li>-->
-                        <li class="tab col s3"><a href="#tab-mapping-rules" class="translate" id="messages">Mapping rules</a></li>
-                        <li class="tab col s3"><a href="#tab-active-rules" class="translate active">Active rules</a></li>
+                        <li class="tab col s3"><a href="#tab-mapping-rules" class="translate active" id="messages">Mapping rules</a></li>
+                        <li class="tab col s3"><a href="#tab-active-rules" class="translate">Active rules</a></li>
                     </ul>
                 </div>
                 <!--<div id="tab-main" class="col s12 page">
@@ -451,6 +479,9 @@
                             <thead>
                                 <tr>
                                     <th class="translate">Rule name</th>
+                                    <th class="translate">Min</th>
+                                    <th class="translate">Max</th>
+                                    <th class="translate">Deviation</th>
                                     <th class="translate">Old state</th>
                                     <th class="translate">New state</th>
                                     <th class="translate">Operations</th>

@@ -161,21 +161,6 @@ function t_setState(v_id, v_value, v_ack, v_rule, v_correction) {
         lp[v_id] = { 'ts': now, 'cnt': 0 };
     }
 
-    if(dict_rules.hasOwnProperty(v_rule)) {
-        let rule = dict_rules[v_rule];
-        let key = getKeyByValue(rule, v_value);
-        if(rule.hasOwnProperty(v_value)) {
-            adapter.log.debug('Replace value for ' + v_id + ' from: ' + v_value + ' to: ' + rule[v_value]);
-            v_value = rule[v_value];
-        } else if(key) {
-            adapter.log.debug('Replace value for ' + v_id + ' from: ' + v_value + ' to: ' + key);
-            v_value = key;
-        } else {
-            adapter.log.warn('Mapping for "' + v_id + '" with value "' + v_value + '" and rule "' + v_rule + '" not found!');
-            return;
-        }
-    }
-
     if(v_correction && !isNaN(v_correction) && v_correction != 0) {
         let floatVal = parseFloat(v_value);
         if (!isNaN(floatVal)) {
@@ -185,6 +170,43 @@ function t_setState(v_id, v_value, v_ack, v_rule, v_correction) {
             v_value = new_value;
         } else {
             adapter.log.warn('Can\'t parse for "' + v_id + '" with value "' + v_value + '"!');
+        }
+    }
+
+    if(dict_rules.hasOwnProperty(v_rule)) {
+        let rule = dict_rules[v_rule];
+        if(rule.hasOwnProperty('mapping')) {
+            let mapping = rule.mapping;
+            let key = getKeyByValue(mapping, v_value);
+            if(mapping.hasOwnProperty(v_value)) {
+                adapter.log.debug('Replace value for ' + v_id + ' from: ' + v_value + ' to: ' + mapping[v_value]);
+                v_value = mapping[v_value];
+            } else if(key) {
+                adapter.log.debug('Replace value for ' + v_id + ' from: ' + v_value + ' to: ' + key);
+                v_value = key;
+            } else {
+                adapter.log.debug('Mapping for "' + v_id + '" with value "' + v_value + '" and rule "' + v_rule + '" not found!');
+            }
+        }
+        if(rule.hasOwnProperty('min') && rule.min && !isNaN(rule.min)) {
+            let vmin = parseFloat(rule.min);
+            let val = parseFloat(v_value);
+            if(!isNaN(vmin) && !isNaN(val)) {
+                if(val < vmin) {
+                    adapter.log.warn('Value for ' + v_id + ': ' + v_value + ' is lower than: ' + vmin);
+                    return;
+                }
+            }
+        }
+        if(rule.hasOwnProperty('max') && rule.max && !isNaN(rule.max)) {
+            let vmax = parseFloat(rule.max);
+            let val = parseFloat(v_value);
+            if(!isNaN(vmax) && !isNaN(val)) {
+                if(val > vmax) {
+                    adapter.log.warn('Value for ' + v_id + ': ' + v_value + ' is grater than: ' + vmax);
+                    return;
+                }
+            }
         }
     }
 
