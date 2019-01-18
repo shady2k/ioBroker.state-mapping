@@ -9,6 +9,7 @@ let dict_in = {};
 let dict_out = {};
 let dict_rules = {};
 let lp = {};
+let dict_lastValue = {};
 
 let adapter;
 function startAdapter(options) {
@@ -81,6 +82,9 @@ function deleteObject(id) {
     if(lp.hasOwnProperty(id)) {
         delete dict_out[id];
     }
+    if(dict_lastValue.hasOwnProperty(id)) {
+        delete dict_lastValue[id];
+    }
 }
 
 function addToObjects(id, obj) {
@@ -142,6 +146,8 @@ function getKeyByValue(object, value) {
     return Object.keys(object).find(key => object[key] == value);
 }
 
+function isNumber(n) { return !isNaN(parseFloat(n)) && !isNaN(n - 0) }
+
 function t_setState(v_id, v_value, v_ack, v_rule, v_correction) {
     v_value = String(v_value);
     let now = new Date().getTime();
@@ -161,9 +167,9 @@ function t_setState(v_id, v_value, v_ack, v_rule, v_correction) {
         lp[v_id] = { 'ts': now, 'cnt': 0 };
     }
 
-    if(v_correction && !isNaN(v_correction) && v_correction != 0) {
+    if(v_correction && isNumber(v_correction) && v_correction != 0) {
         let floatVal = parseFloat(v_value);
-        if (!isNaN(floatVal)) {
+        if (isNumber(floatVal)) {
             let new_value = floatVal + Number(v_correction);
             new_value = Math.round(new_value * 100) / 100;
             adapter.log.debug('Replace value for ' + v_id + ' from: ' + v_value + ' to: ' + new_value);
@@ -175,6 +181,7 @@ function t_setState(v_id, v_value, v_ack, v_rule, v_correction) {
 
     if(dict_rules.hasOwnProperty(v_rule)) {
         let rule = dict_rules[v_rule];
+
         if(rule.hasOwnProperty('mapping')) {
             let mapping = rule.mapping;
             let key = getKeyByValue(mapping, v_value);
@@ -188,22 +195,39 @@ function t_setState(v_id, v_value, v_ack, v_rule, v_correction) {
                 adapter.log.debug('Mapping for "' + v_id + '" with value "' + v_value + '" and rule "' + v_rule + '" not found!');
             }
         }
-        if(rule.hasOwnProperty('min') && rule.min && !isNaN(rule.min)) {
-            let vmin = parseFloat(rule.min);
-            let val = parseFloat(v_value);
-            if(!isNaN(vmin) && !isNaN(val)) {
-                if(val < vmin) {
-                    adapter.log.warn('Value for ' + v_id + ': ' + v_value + ' is lower than: ' + vmin);
-                    return;
+
+        if(isNumber(v_value)) {
+            if(rule.hasOwnProperty('min') && rule.min && isNumber(rule.min)) {
+                let vmin = parseFloat(rule.min);
+                let val = parseFloat(v_value);
+                if(isNumber(vmin) && isNumber(val)) {
+                    if(val < vmin) {
+                        adapter.log.warn('Value for ' + v_id + ': ' + v_value + ' is lower than: ' + vmin);
+                        return;
+                    }
                 }
             }
-        }
-        if(rule.hasOwnProperty('max') && rule.max && !isNaN(rule.max)) {
-            let vmax = parseFloat(rule.max);
-            let val = parseFloat(v_value);
-            if(!isNaN(vmax) && !isNaN(val)) {
-                if(val > vmax) {
-                    adapter.log.warn('Value for ' + v_id + ': ' + v_value + ' is grater than: ' + vmax);
+            if(rule.hasOwnProperty('max') && rule.max && isNumber(rule.max)) {
+                let vmax = parseFloat(rule.max);
+                let val = parseFloat(v_value);
+                if(isNumber(vmax) && isNumber(val)) {
+                    if(val > vmax) {
+                        adapter.log.warn('Value for ' + v_id + ': ' + v_value + ' is grater than: ' + vmax);
+                        return;
+                    }
+                }
+            }
+            if(rule.hasOwnProperty('deviation') && rule.deviation && isNumber(rule.deviation) && rule.deviation != 0) {
+                let deviation = parseFloat(rule.deviation);
+                let val = parseFloat(v_value);
+                if(!dict_lastValue.hasOwnProperty(v_id)) {
+                    dict_lastValue[v_id] = v_value;
+                }
+                let last_value = dict_lastValue[v_id];
+                dict_lastValue[v_id] = v_value;
+
+                if(Math.abs(val - last_value) >= deviation) {
+                    adapter.log.warn('Difference for ' + v_id + ' between: ' + v_value + ' (new) and '+ last_value+' (old) is grater than: ' + deviation);
                     return;
                 }
             }
