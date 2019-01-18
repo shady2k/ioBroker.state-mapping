@@ -20,12 +20,12 @@ If you want to convert values, you need to create rules.
 Click, Add rule. Each rule may have multiple mappings, use blue plus in Operations column to add additional mapping. Set rule name, value will be converted from old state to new state. For example, your device sends ON or OFF to mqtt topic, and you need to convert this to boolean true/false and copy to other state.
 
 ## Active rules
-On Active rules page you can see all objects with rules, add new object, edit and delete it.
-Min - if value is lower than it, new value will be ignored
-Max - if value is grater than it, new value will be ignored
-Deviation - if value differ from old value more than it, new value will be ignored
-Old state - state before mapping
-New state - state after mapping, it will be passed to destination object
+On Active rules page you can see all objects with rules, add new object, edit and delete it.<br/>
+Min - if value is lower than it, new value will be ignored<br/>
+Max - if value is grater than it, new value will be ignored<br/>
+Deviation - if value differ from old value more than it, new value will be ignored<br/>
+Old state - state before mapping<br/>
+New state - state after mapping, it will be passed to destination object<br/>
 
 # Configure your objects
 Click settings on your object and check enable. In rule field you can enter name of mapping rule, that you created before. If value is number, you can set correction. For example, if you set -1, your value will be decrease by 1 each state update.
