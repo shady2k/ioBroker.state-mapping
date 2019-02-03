@@ -48,7 +48,7 @@ function startAdapter(options) {
                 }
             }
             if(dict_out.hasOwnProperty(id)) {
-                if(state.from != 'system.adapter.' + adapter.namespace) {
+                if(!state.ack) {
                     adapter.log.debug('out: ' + JSON.stringify(state));
                     t_setState(dict_out[id].id, state.val, state.ack, dict_out[id].rule, dict_out[id].correction);
                 }
@@ -124,19 +124,23 @@ function addToObjects(id, obj) {
                 dict_in[custom.input] = { 'id': id, 'rule': rule, 'correction': correction };
             }
         } 
-        
-        if(custom.output) {
+
+        if(custom.output && custom.input) {
             if(!dict_out.hasOwnProperty(id)) {
-                dict_out[id] = { 'id': custom.output, 'rule': rule, 'correction': correction * -1 };
+                dict_out[id] = { 'id': custom.output, 'rule': rule, 'correction': 0 };
             }
-        } 
+        } else if(custom.output) {
+            if(!dict_out.hasOwnProperty(id)) {
+                dict_out[id] = { 'id': custom.output, 'rule': rule, 'correction': correction };
+            }
+        }
     } else {
         if(custom.io) {
             if(!dict_in.hasOwnProperty(custom.io)) {
                 dict_in[custom.io] = { 'id': id, 'rule': rule, 'correction': correction };
             }
             if(!dict_out.hasOwnProperty(custom.io)) {
-                dict_out[id] = { 'id': custom.io, 'rule': rule, 'correction': correction * -1 };
+                dict_out[id] = { 'id': custom.io, 'rule': rule, 'correction': 0 };
             }
         }
     }

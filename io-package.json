@@ -1,8 +1,13 @@
 {
     "common": {
         "name": "state-mapping",
-        "version": "0.0.6",
+        "version": "0.0.7",
         "news": {
+            "0.0.7": {
+                "en": "Bugs fixed",
+                "de": "Fehler behoben",
+                "ru": "Исправление ошибок"
+            },
             "0.0.6": {
                 "en": "Revision of the rules. Attention! Save the rules before upgrading, there is no backward compatibility.",
                 "de": "Überarbeitung der Regeln. Beachtung! Speichern Sie die Regeln vor dem Upgrade. Es besteht keine Abwärtskompatibilität.",

@@ -28,7 +28,7 @@ New state - state after mapping, it will be passed to destination object<br/>
 On Active rules page you can see all objects with rules, add new object, edit and delete it.<br/>
 
 # Configure your objects
-Click settings on your object and check enable. In rule field you can enter name of mapping rule, that you created before. If value is number, you can set correction. For example, if you set -1, your value will be decrease by 1 each state update.
+Click settings on your object and check enable. In rule field you can enter name of mapping rule, that you created before. If value is number, you can set correction. For example, if you set -1, your value will be decrease by 1 each state update. Correction will be applied only for input object, but if only one output object without input it will be applied to output.
 If you want just copy value to your state, set source object name in "Input" field.
 If you need copy value from your object to another state, use "Output" field. Set destination state in this field.
 And if you want two-way copy, set object name to "Input and output field".
