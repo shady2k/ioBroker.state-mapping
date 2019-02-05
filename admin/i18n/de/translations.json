@@ -15,8 +15,9 @@
   "Output": "Ausgabe",
   "Input and output": "Eingabe und Ausgabe",
   "Rule": "Regel",
-  "Correction": "Korrektur",
-  "Enabled": "Aktiviert",
+  "Corr.": "Korrektur",
+  "Is on?": "Aktiviert",
+  "Ignore Ack": "Ignor. Ack",
   "Add object: ": "Objekt hinzufügen: ",
   "Active rules": "Aktive Regeln"
 }

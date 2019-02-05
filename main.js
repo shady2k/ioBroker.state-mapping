@@ -43,13 +43,17 @@ function startAdapter(options) {
         stateChange: function (id, state) {
             if(dict_in.hasOwnProperty(id)) {
                 if(state.from != 'system.adapter.' + adapter.namespace) {
-                    adapter.log.debug('in: ' + JSON.stringify(state));
-                    t_setState(dict_in[id].id, state.val, state.ack, dict_in[id].rule, dict_in[id].correction);
+                    adapter.log.debug('in "'+id+'": ' + JSON.stringify(state));
+                    if(dict_in[id].ignoreAck) {
+                        t_setState(dict_in[id].id, state.val, false, dict_in[id].rule, dict_in[id].correction);
+                    } else {
+                        t_setState(dict_in[id].id, state.val, state.ack, dict_in[id].rule, dict_in[id].correction);
+                    }
                 }
             }
             if(dict_out.hasOwnProperty(id)) {
                 if(!state.ack) {
-                    adapter.log.debug('out: ' + JSON.stringify(state));
+                    adapter.log.debug('out "'+id+'": ' + JSON.stringify(state));
                     t_setState(dict_out[id].id, state.val, state.ack, dict_out[id].rule, dict_out[id].correction);
                 }
             }
@@ -99,6 +103,11 @@ function addToObjects(id, obj) {
         return;
     }
 
+    let ignoreAck = false;
+    if(custom.ignoreAck) {
+        ignoreAck = custom.ignoreAck === true;
+    }
+
     let rule = 'none';
     if(custom.rule && custom.rule != '') {
         if(dict_rules.hasOwnProperty(custom.rule)) {
@@ -121,7 +130,7 @@ function addToObjects(id, obj) {
     if(custom.input || custom.output) {
         if(custom.input) {
             if(!dict_in.hasOwnProperty(custom.input)) {
-                dict_in[custom.input] = { 'id': id, 'rule': rule, 'correction': correction };
+                dict_in[custom.input] = { 'id': id, 'ignoreAck': ignoreAck, 'rule': rule, 'correction': correction };
             }
         } 
 
@@ -137,7 +146,7 @@ function addToObjects(id, obj) {
     } else {
         if(custom.io) {
             if(!dict_in.hasOwnProperty(custom.io)) {
-                dict_in[custom.io] = { 'id': id, 'rule': rule, 'correction': correction };
+                dict_in[custom.io] = { 'id': id, 'ignoreAck': ignoreAck, 'rule': rule, 'correction': correction };
             }
             if(!dict_out.hasOwnProperty(custom.io)) {
                 dict_out[id] = { 'id': custom.io, 'rule': rule, 'correction': 0 };

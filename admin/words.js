@@ -20,8 +20,9 @@ systemDictionary = {
     "Output": {                                      "de": "Ausgabe",                                         "ru": "Куда копировать"},
     "Input and output": {                            "de": "Eingabe und Ausgabe",                             "ru": "Двустороннее копирование"},
     "Rule": {                                        "de": "Regel",                                           "ru": "Правило"},
-    "Correction": {                                  "de": "Korrektur",                                       "ru": "Коррекция"},
-    "Enabled": {                                     "de": "Aktiviert",                                       "ru": "Включено"},
+    "Corr.": {                                      "de": "Korrektur",                                       "ru": "Коррекция"},
+    "Is on?": {                                     "de": "Aktiviert",                                       "ru": "Включено"},
+    "Ignore Ack": {                                  "de": "Ignor. Ack",                                      "ru": "Игнор. Ack"},
     "Add object: ": {                                "de": "Objekt hinzufügen: ",                             "ru": "Добавить объект: "},
     "Active rules": {                                "de": "Aktive Regeln",                                   "ru": "Активные правила"},
 };

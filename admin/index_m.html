@@ -200,6 +200,7 @@
                     let table_html = '<tr>';
                     table_html += '<td id="id" contenteditable="true"></td>';
                     table_html += '<td><input id="enabled" style="width: 40px" class="filled-in" type="checkbox" checked><span></span></td>';
+                    table_html += '<td><input id="ignoreAck" style="width: 40px" class="filled-in" type="checkbox"><span></span></td>';
                     table_html += '<td id="input" contenteditable="true"></td>';
                     table_html += '<td id="output" contenteditable="true"></td>';
                     table_html += '<td id="io" contenteditable="true"></td>';
@@ -288,6 +289,12 @@
                     } else {
                         table_html += '<td><input id="enabled" style="width: 40px" class="filled-in" type="checkbox"><span></span></td>';
                     }
+                    let ignoreAck = getValue(custom.ignoreAck);
+                    if(ignoreAck) {
+                        table_html += '<td><input id="ignoreAck" style="width: 40px" class="filled-in" type="checkbox" checked><span></span></td>';
+                    } else {
+                        table_html += '<td><input id="ignoreAck" style="width: 40px" class="filled-in" type="checkbox"><span></span></td>';
+                    }
                     table_html += '<td id="input" contenteditable="true">' + getValue(custom.input) + '</td>';
                     table_html += '<td id="output" contenteditable="true">' + getValue(custom.output) + '</td>';
                     table_html += '<td id="io" contenteditable="true">' + getValue(custom.io) + '</td>';
@@ -354,6 +361,8 @@
                          let custom = obj2.common.custom[namespace] = {};
                          let enabled = $(this).find("input[id='enabled']").prop('checked');
                          custom.enabled = enabled === true;
+                         let ignoreAck = $(this).find("input[id='ignoreAck']").prop('checked');
+                         custom.ignoreAck = ignoreAck === true;
                          custom.input = $(this).find("td[id='input']").text();
                          custom.output = $(this).find("td[id='output']").text();
                          custom.io = $(this).find("td[id='io']").text();
@@ -370,6 +379,9 @@
                                          isSame = false;
                                          break;
                                      }
+                                 } else if (custom.hasOwnProperty(k) && !custom_now.hasOwnProperty(k)) {
+                                    isSame = false;
+                                    break;
                                  }
                              }
                          } else {
@@ -497,13 +509,14 @@
                             <thead>
                                 <tr>
                                     <th class="translate">ID</th>
-                                    <th class="translate">Enabled</th>
+                                    <th class="translate">Is on?</th>
+                                    <th class="translate">Ignore Ack</th>
                                     <th class="translate">Input</th>
                                     <th class="translate">Output</th>
                                     <th class="translate">Input and output</th>
                                     <th class="translate">Rule</th>
-                                    <th class="translate">Correction</th>
-                                    <th class="translate">Operations</th>
+                                    <th class="translate">Corr.</th>
+                                    <th class="translate">Actions</th>
                                 </tr>
                             </thead>
                             <tbody></tbody>

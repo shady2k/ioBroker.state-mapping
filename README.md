@@ -32,4 +32,5 @@ Click settings on your object and check enable. In rule field you can enter name
 If you want just copy value to your state, set source object name in "Input" field.
 If you need copy value from your object to another state, use "Output" field. Set destination state in this field.
 And if you want two-way copy, set object name to "Input and output field".
+Ignore Ack lets you ignore acknowledged flag in the input object state. It will be copied with Acknowledged = false. Be careful, if input and output objects relative to each other, this may caused loop, see logs for loop detected warning.
 It is not recommended to set all three fields at some time. Use "Input"/"Output" fields or only "Input and output" field.
