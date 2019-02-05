@@ -1,8 +1,13 @@
 {
     "common": {
         "name": "state-mapping",
-        "version": "0.0.7",
+        "version": "0.0.8",
         "news": {
+            "0.0.8": {
+                "en": "Added ignore Ack flag",
+                "de": "Ack-Flag ignorieren hinzugefügt",
+                "ru": "Добавлено игнорирование флага Ack"
+            },
             "0.0.7": {
                 "en": "Bugs fixed",
                 "de": "Fehler behoben",
