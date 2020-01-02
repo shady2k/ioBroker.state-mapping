@@ -279,8 +279,8 @@
                     ids_arr.push(obj.id);
                 }
 
-                if (obj && obj.id && obj.value && obj.value.custom && obj.value.custom[namespace]) { /*&& obj.value.custom[namespace].enabled*/
-                    let custom = obj.value.custom[namespace];
+                if (obj && obj.id && obj.value && obj.value.common && obj.value.common.custom && obj.value.common.custom[namespace]) { /*&& obj.value.common.custom[namespace].enabled*/
+                    let custom = obj.value.common.custom[namespace];
                     table_html += '<tr>';
                     table_html += '<td id="id"><a href="' + v_url + '/#tab-objects/customs/' + obj.id + '" target=_blank>' + obj.id + '</a></td>';
                     let enabled = getValue(custom.enabled);
@@ -330,7 +330,7 @@
         }
 
         function getObjects(callback) {
-            socket.emit('getObjectView', 'statemapping', 'state', {}, function (err, res) {
+            socket.emit('getObjectView', 'system', 'state', {}, function (err, res) {
                 if (!err && res) {
                     callback(null, res);
                     return;

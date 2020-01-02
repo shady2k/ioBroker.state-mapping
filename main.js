@@ -1,5 +1,6 @@
-/* jshint -W097 */// jshint strict:false
-/*jslint node: true */
+/* jshint -W097 */
+/* jshint strict:false */
+/* jslint node: true */
 'use strict';
 
 const utils = require('@iobroker/adapter-core'); // Get common adapter utils
@@ -10,6 +11,7 @@ let dict_out = {};
 let dict_rules = {};
 let lp = {};
 let dict_lastValue = {};
+let connected = null;
 
 let adapter;
 function startAdapter(options) {
@@ -66,6 +68,13 @@ function startAdapter(options) {
 	return adapter;
 };
 
+function setConnected(isConnected) {
+    if (connected !== isConnected) {
+        connected = isConnected;
+        adapter.setState('info.connection', connected, true);
+    }
+}
+
 function deleteByValue(obj, val) {
     for(let f in obj) {
         if(obj.hasOwnProperty(f) && obj[f].id == val) {
@@ -95,8 +104,8 @@ function addToObjects(id, obj) {
     adapter.log.info('Register State Mapping for id: ' + id);
     
     let custom = null;
-    if(obj && obj.value && obj.value.custom && obj.value.custom[adapter.namespace]) {
-        custom = obj.value.custom[adapter.namespace];
+    if(obj && obj.value && obj.value.common && obj.value.common.custom && obj.value.common.custom[adapter.namespace]) {
+        custom = obj.value.common.custom[adapter.namespace];
     } else if(obj && obj.common && obj.common.custom && obj.common.custom[adapter.namespace]) {
         custom = obj.common.custom[adapter.namespace];
     } else {
@@ -260,12 +269,13 @@ function t_setState(v_id, v_value, v_ack, v_rule, v_correction) {
 }
 
 function main() {
+    setConnected(false);
     adapter.log.info('State Mapping adapter started!');
-    adapter.objects.getObjectView('statemapping', 'state', {}, function (err, doc) {
+    adapter.getObjectView('system', 'state', {}, function (err, doc) {
         if(doc && doc.rows) {
             for(let i = 0, l = doc.rows.length; i < l; i++) {
                 let obj = doc.rows[i];
-                if(obj && obj.id && obj.value && obj.value.custom && obj.value.custom[adapter.namespace] && obj.value.custom[adapter.namespace].enabled) {
+                if(obj && obj.id && obj.value && obj.value.common && obj.value.common.custom && obj.value.common.custom[adapter.namespace] && obj.value.common.custom[adapter.namespace].enabled) {
                     addToObjects(obj.id, obj);
                 }
             }
@@ -287,6 +297,7 @@ function main() {
 
     adapter.subscribeForeignObjects('*');
     adapter.subscribeForeignStates('*');
+    setConnected(true);
 }
 
 // If started as allInOne/compact mode => return function to create instance

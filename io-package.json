@@ -1,95 +1,96 @@
 {
-    "common": {
-        "name": "state-mapping",
-        "version": "0.0.8",
-        "news": {
-            "0.0.8": {
-                "en": "Added ignore Ack flag",
-                "de": "Ack-Flag ignorieren hinzugefügt",
-                "ru": "Добавлено игнорирование флага Ack"
-            },
-            "0.0.7": {
-                "en": "Bugs fixed",
-                "de": "Fehler behoben",
-                "ru": "Исправление ошибок"
-            },
-            "0.0.6": {
-                "en": "Revision of the rules. Attention! Save the rules before upgrading, there is no backward compatibility.",
-                "de": "Überarbeitung der Regeln. Beachtung! Speichern Sie die Regeln vor dem Upgrade. Es besteht keine Abwärtskompatibilität.",
-                "ru": "Доработка правил. Внимание! Сохраните правила перед обновлением, обратной совместимости нет."
-            },
-            "0.0.5": {
-                "en": "Bugs fixed",
-                "de": "Fehler behoben",
-                "ru": "Исправление ошибок"
-            },
-            "0.0.4": {
-                "en": "Active rules GUI improvement",
-                "de": "GUI-Verbesserung für aktive Regeln",
-                "ru": "Улучшение графического интерфейса для активных правил"
-            },
-            "0.0.3": {
-                "en": "Added GUI for active rules",
-                "de": "GUI für aktive Regeln hinzugefügt",
-                "ru": "Добавлен графический интерфейс для активных правил"
-            },
-            "0.0.2": {
-                "en": "Added GUI for rules",
-                "de": "GUI für Regeln hinzugefügt",
-                "ru": "Добавлен графический интерфейс для правил"
-            },
-            "0.0.1": {
-                "en": "initial version",
-                "de": "Initiale Version",
-                "ru": "Первоначальная версия адаптера",
-                "pt": "Versão inicial",
-                "fr": "Version initiale",
-                "nl": "Eerste release"
-            }
-        },
-        "title": "State mapping",
-        "titleLang": {
-            "en": "State mapping"
-        },
-        "desc": {
-            "en": "This adapter allows you to copy updated value from one state to another using mapping rules.",
-            "de": "Mit diesem Adapter können Sie den aktualisierten Wert mithilfe von Mapping-Regeln von einem Status in einen anderen kopieren.",
-            "ru": "Этот адаптер позволяет копировать значение из одного объекта в другой с преобразованием."
-        },
-        "authors": [
-            "shady2k <shady2k@gmail.com>"
-        ],
-        "platform": "Javascript/Node.js",
-        "mode": "daemon",
-        "compact": true,
-        "icon": "state-mapping.png",
-        "supportCustoms": true,
-        "materialize": true,
-        "enabled": true,
-        "extIcon": "https://raw.githubusercontent.com/shady2k/ioBroker.state-mapping/master/admin/state-mapping.png",
-        "keywords": [
-            "state",
-            "mapping",
-            "logic",
-            "script"
-        ],
-        "readme": "https://github.com/shady2k/ioBroker.state-mapping/blob/master/README.md",
-        "loglevel": "info",
-        "type": "logic",
-        "license": "MIT",
-        "messagebox": false,
-        "stopTimeout": 5000
+  "common": {
+    "name": "state-mapping",
+    "version": "0.0.8",
+    "news": {
+      "0.0.8": {
+        "en": "Added ignore Ack flag",
+        "de": "Ack-Flag ignorieren hinzugefügt",
+        "ru": "Добавлено игнорирование флага Ack"
+      },
+      "0.0.7": {
+        "en": "Bugs fixed",
+        "de": "Fehler behoben",
+        "ru": "Исправление ошибок"
+      },
+      "0.0.6": {
+        "en": "Revision of the rules. Attention! Save the rules before upgrading, there is no backward compatibility.",
+        "de": "Überarbeitung der Regeln. Beachtung! Speichern Sie die Regeln vor dem Upgrade. Es besteht keine Abwärtskompatibilität.",
+        "ru": "Доработка правил. Внимание! Сохраните правила перед обновлением, обратной совместимости нет."
+      },
+      "0.0.5": {
+        "en": "Bugs fixed",
+        "de": "Fehler behoben",
+        "ru": "Исправление ошибок"
+      },
+      "0.0.4": {
+        "en": "Active rules GUI improvement",
+        "de": "GUI-Verbesserung für aktive Regeln",
+        "ru": "Улучшение графического интерфейса для активных правил"
+      },
+      "0.0.3": {
+        "en": "Added GUI for active rules",
+        "de": "GUI für aktive Regeln hinzugefügt",
+        "ru": "Добавлен графический интерфейс для активных правил"
+      },
+      "0.0.2": {
+        "en": "Added GUI for rules",
+        "de": "GUI für Regeln hinzugefügt",
+        "ru": "Добавлен графический интерфейс для правил"
+      },
+      "0.0.1": {
+        "en": "initial version",
+        "de": "Initiale Version",
+        "ru": "Первоначальная версия адаптера",
+        "pt": "Versão inicial",
+        "fr": "Version initiale",
+        "nl": "Eerste release"
+      }
     },
-    "native": {},
-    "objects": [
-        {
-            "_id": "_design/statemapping",
-            "language": "javascript",
-            "views": {
-                "state": {
-                    "map": "function (doc) { if (doc.type == 'state' && doc.common) emit(doc._id, doc.common); }"
-                }
-            }
-        }
-    ]
+    "title": "State mapping",
+    "titleLang": {
+      "en": "State mapping"
+    },
+    "desc": {
+      "en": "This adapter allows you to copy updated value from one state to another using mapping rules.",
+      "de": "Mit diesem Adapter können Sie den aktualisierten Wert mithilfe von Mapping-Regeln von einem Status in einen anderen kopieren.",
+      "ru": "Этот адаптер позволяет копировать значение из одного объекта в другой с преобразованием."
+    },
+    "authors": [
+      "shady2k <shady2k@gmail.com>"
+    ],
+    "platform": "Javascript/Node.js",
+    "mode": "daemon",
+    "compact": true,
+    "icon": "state-mapping.png",
+    "supportCustoms": true,
+    "materialize": true,
+    "enabled": true,
+    "extIcon": "https://raw.githubusercontent.com/shady2k/ioBroker.state-mapping/master/admin/state-mapping.png",
+    "keywords": [
+      "state",
+      "mapping",
+      "logic",
+      "script"
+    ],
+    "readme": "https://github.com/shady2k/ioBroker.state-mapping/blob/master/README.md",
+    "loglevel": "info",
+    "type": "logic",
+    "license": "MIT",
+    "messagebox": false,
+    "stopTimeout": 5000,
+    "installedFrom": "https://github.com/shady2k/ioBroker.state-mapping/tarball/45adf92f654917cb70490c09d336246bd6c75bf2"
+  },
+  "native": {},
+  "instanceObjects": [
+    {
+      "_id": "info",
+      "type": "channel",
+      "common": {
+        "name": "Information"
+      },
+      "native": {}
+    }
+  ],
+  "objects": []
 }
