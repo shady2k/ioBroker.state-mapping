@@ -171,8 +171,7 @@ function getKeyByValue(object, value) {
 function isNumber(n) { return !isNaN(parseFloat(n)) && !isNaN(n - 0) }
 
 function t_setState(v_id, v_value, v_ack, v_rule, v_correction) {
-    v_value = String(v_value);
-    let now = new Date().getTime();
+    const now = new Date().getTime();
     if(lp.hasOwnProperty(v_id)) {
         if((now - lp[v_id].ts) < 2000) {
             if(lp[v_id].cnt > 2) {
@@ -259,7 +258,7 @@ function t_setState(v_id, v_value, v_ack, v_rule, v_correction) {
     if(v_value == 'true') v_value = true;
     if(v_value == 'false') v_value = false;
 
-    adapter.log.debug('Update ' + v_id + ' to: ' + v_value + ', ack = ' + v_ack);
+    adapter.log.debug(`Update '${v_id}' with type '${typeof v_value}' to: '${v_value}'', ack = '${v_ack}'`);
     adapter.setForeignState(v_id, {val: v_value, ack: v_ack}, function(err) {
         if(err) {
             adapter.log.warn('Problem with update: ' + v_id);
@@ -306,4 +305,4 @@ if(module && module.parent) {
 } else {
     // or start the instance directly
     startAdapter();
-} 
+}
