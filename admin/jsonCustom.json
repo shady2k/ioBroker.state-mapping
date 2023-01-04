@@ -1,0 +1,48 @@
+{
+    "items": {
+        "rule": {
+            "type": "text",
+            "label": "Rule",
+            "sm": 4
+        },
+        "correction": {
+            "type": "text",
+            "label": "Correction",
+            "sm": 4,
+            "default": 0
+        },
+        "_input": {
+            "newLine": true,
+            "type": "header",
+            "text": "Input",
+            "sm": 12
+        },
+        "input": {
+            "type": "text",
+            "label": "Input",
+            "sm": 4
+        },
+        "_output": {
+            "newLine": true,
+            "type": "header",
+            "text": "Output",
+            "sm": 12
+        },
+        "output": {
+            "type": "text",
+            "label": "Output",
+            "sm": 4
+        },
+        "_io": {
+            "newLine": true,
+            "type": "header",
+            "text": "Input and Output",
+            "sm": 12
+        },
+        "io": {
+            "type": "text",
+            "label": "Input and output",
+            "sm": 4
+        }
+    }
+}

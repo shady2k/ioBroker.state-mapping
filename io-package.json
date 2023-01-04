@@ -1,8 +1,13 @@
 {
   "common": {
     "name": "state-mapping",
-    "version": "0.0.9",
+    "version": "0.1.0",
     "news": {
+      "0.1.0": {
+        "en": "Updating adapter to new verison of controller",
+        "de": "Adapter auf neue Version des Controllers aktualisieren",
+        "ru": "Обновление адаптера до новой версии контроллера"
+      },
       "0.0.9": {
         "en": "Updating adapter to new verison of controller",
         "de": "Adapter auf neue Version des Controllers aktualisieren",
@@ -69,7 +74,10 @@
     "compact": true,
     "icon": "state-mapping.png",
     "supportCustoms": true,
+    "supportStopInstance": true,
     "materialize": true,
+    "connectionType": "none",
+    "dataSource": "none",
     "enabled": true,
     "extIcon": "https://raw.githubusercontent.com/shady2k/ioBroker.state-mapping/master/admin/state-mapping.png",
     "keywords": [
@@ -86,16 +94,15 @@
     "stopTimeout": 5000,
     "installedFrom": "https://github.com/shady2k/ioBroker.state-mapping/tarball/45adf92f654917cb70490c09d336246bd6c75bf2"
   },
-  "native": {},
-  "instanceObjects": [
+  "dependencies": [
     {
-      "_id": "info",
-      "type": "channel",
-      "common": {
-        "name": "Information"
-      },
-      "native": {}
+      "js-controller": ">=3.3.0"
     }
   ],
+  "adminUI": {
+    "custom": "json",
+    "config": "materialize"
+  },
+  "native": {},
   "objects": []
 }
