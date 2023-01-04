@@ -1,12 +1,12 @@
 <html>
 
 <head>
-    <link rel="stylesheet" type="text/css" href="../../css/adapter.css"/>
+    <link rel="stylesheet" type="text/css" href="../../css/adapter.css" />
     <link rel="stylesheet" type="text/css" href="../../lib/css/materialize.css">
-    
+
     <script type="text/javascript" src="../../lib/js/jquery-3.2.1.min.js"></script>
     <script type="text/javascript" src="../../socket.io/socket.io.js"></script>
-    
+
     <script type="text/javascript" src="../../js/translate.js"></script>
     <script type="text/javascript" src="../../lib/js/materialize.js"></script>
     <script type="text/javascript" src="../../js/adapter-settings.js"></script>
@@ -15,28 +15,33 @@
     <link rel="stylesheet" type="text/css" href="static/css/jquery-ui.min.css" />
     <script type="text/javascript" src="static/js/jquery-ui.min.js"></script>
     <style>
-    .m .col .select-wrapper+label {
-        top: -26px;
-    }
-    .m span{
-        font-size: 0.9em;
-    }
-    .mappingrules {
-        height: 100px !important;
-    }
-    th {
-        z-index: 100;
-    }
-    #rules-active-table {
-        width: 100%;
-        position: relative;
-        font-size: 14px;
-    }
-    #rules-active-table thead th {
-        position: sticky;
-        top: 0;
-    }
-</style>
+        .m .col .select-wrapper+label {
+            top: -26px;
+        }
+
+        .m span {
+            font-size: 0.9em;
+        }
+
+        .mappingrules {
+            height: 100px !important;
+        }
+
+        th {
+            z-index: 100;
+        }
+
+        #rules-active-table {
+            width: 100%;
+            position: relative;
+            font-size: 14px;
+        }
+
+        #rules-active-table thead th {
+            position: sticky;
+            top: 0;
+        }
+    </style>
     <!-- you have to define 2 functions in the global scope: -->
     <script type="text/javascript">
         var ids_arr = [];
@@ -44,7 +49,7 @@
 
         function load(settings, onChange) {
             if (!settings) return;
-            
+
             var namespace = adapter + '.' + instance;
 
             let table_json = null;
@@ -62,17 +67,17 @@
             rules_arr = [];
 
             let ti = 0;
-            for (let rule_name in table_json) {
+            for (const rule_name in table_json) {
                 rules_arr.push(rule_name);
                 let rule = table_json[rule_name];
                 let mappings = rule.mapping;
                 let mappings_cnt = Object.keys(mappings).length;
-                if(mappings_cnt == 0) mappings_cnt++;
+                if (mappings_cnt == 0) mappings_cnt++;
                 table_html += '<tr><td id="ruleName" contenteditable="true" rowspan="' + mappings_cnt + '">' + rule_name + '</td>';
-                table_html += '<td id="min" contenteditable="true" rowspan="' + mappings_cnt + '">'+ rule.min +'</td>';
-                table_html += '<td id="max" contenteditable="true" rowspan="' + mappings_cnt + '">'+ rule.max +'</td>';
-                table_html += '<td id="deviation" contenteditable="true" rowspan="' + mappings_cnt + '">'+ rule.deviation +'</td>';
-                
+                table_html += '<td id="min" contenteditable="true" rowspan="' + mappings_cnt + '">' + rule.min + '</td>';
+                table_html += '<td id="max" contenteditable="true" rowspan="' + mappings_cnt + '">' + rule.max + '</td>';
+                table_html += '<td id="deviation" contenteditable="true" rowspan="' + mappings_cnt + '">' + rule.deviation + '</td>';
+
                 let i = 0;
                 for (let mapping in mappings) {
                     if (i > 0) table_html += '<tr>';
@@ -96,7 +101,7 @@
                     table_html += '</tr>';
                     i++;
                 }
-                if(i == 0) {
+                if (i == 0) {
                     table_html += '<td id="oldState" contenteditable="true"></td>';
                     table_html += '<td id="newState" contenteditable="true"></td>';
                     table_html += "<td>";
@@ -107,7 +112,7 @@
                 ti++;
             }
 
-            $("#rules-active-table td[id='rule']").autocomplete( "option", "source", rules_arr);
+            $("#rules-active-table td[id='rule']").autocomplete("option", "source", rules_arr);
 
             $('#rules-table tbody').append(table_html);
 
@@ -193,35 +198,35 @@
             });
 
             $('#rules-active-container').find('.table-button-add-object').on('click', function () {
-                    let table_html = '<tr>';
-                    table_html += '<td id="id" contenteditable="true"></td>';
-                    table_html += '<td><input id="enabled" style="width: 40px" class="filled-in" type="checkbox" checked><span></span></td>';
-                    table_html += '<td><input id="ignoreAck" style="width: 40px" class="filled-in" type="checkbox"><span></span></td>';
-                    table_html += '<td id="input" contenteditable="true"></td>';
-                    table_html += '<td id="output" contenteditable="true"></td>';
-                    table_html += '<td id="io" contenteditable="true"></td>';
-                    table_html += '<td id="rule" contenteditable="true"></td>';
-                    table_html += '<td id="correction" contenteditable="true"></td>';
-                    table_html += '<td><a class="table-button-delete btn-floating btn-small waves-effect waves-light red"><i class="material-icons">delete</i></a></td>';
-                    table_html += '</tr>';
+                let table_html = '<tr>';
+                table_html += '<td id="id" contenteditable="true"></td>';
+                table_html += '<td><input id="enabled" style="width: 40px" class="filled-in" type="checkbox" checked><span></span></td>';
+                table_html += '<td><input id="ignoreAck" style="width: 40px" class="filled-in" type="checkbox"><span></span></td>';
+                table_html += '<td id="input" contenteditable="true"></td>';
+                table_html += '<td id="output" contenteditable="true"></td>';
+                table_html += '<td id="io" contenteditable="true"></td>';
+                table_html += '<td id="rule" contenteditable="true"></td>';
+                table_html += '<td id="correction" contenteditable="true"></td>';
+                table_html += '<td><a class="table-button-delete btn-floating btn-small waves-effect waves-light red"><i class="material-icons">delete</i></a></td>';
+                table_html += '</tr>';
                 $('#rules-active-table tr:last').after(table_html);
 
                 $("#rules-active-table td[id='id']").autocomplete({
-                    source: function(request, response) {
+                    source: function (request, response) {
                         var results = $.ui.autocomplete.filter(ids_arr, request.term);
                         response(results.slice(0, 10));
                     }
                 });
 
                 $("#rules-active-table td[id='rule']").autocomplete({
-                    source: function(request, response) {
+                    source: function (request, response) {
                         var results = $.ui.autocomplete.filter(rules_arr, request.term);
                         response(results.slice(0, 10));
                     }
                 });
 
                 $("#rules-active-table td[id='input'], #rules-active-table td[id='output'], #rules-active-table td[id='io']").autocomplete({
-                    source: function(request, response) {
+                    source: function (request, response) {
                         var results = $.ui.autocomplete.filter(ids_arr, request.term);
                         response(results.slice(0, 10));
                     }
@@ -233,17 +238,17 @@
             $("#rules-active-container").on("click", '.table-button-delete', function () {
                 let tr = $(this).closest('tr');
                 let id = tr.find("td[id='id']").text();
-                if(id) {
+                if (id) {
                     tr.css("background-color", "#FF3700");
                     tr.fadeOut(400, function () {
                         onChange();
-                            /*let obj2 = { common: { custom: {} } };
-                            let custom = obj2.common.custom[namespace] = {};
+                        /*let obj2 = { common: { custom: {} } };
+                        let custom = obj2.common.custom[namespace] = {};
 
-                            socket.emit('extendObject', id, obj2, function () {
-                                console.log('delete id: ' + id);
-                            });*/
-                            //tr.remove();
+                        socket.emit('extendObject', id, obj2, function () {
+                            console.log('delete id: ' + id);
+                        });*/
+                        //tr.remove();
                     });
                 } else {
                     tr.remove();
@@ -251,8 +256,8 @@
                 return false;
             });
 
-            getObjects(function(err, res) {
-                if(err) {
+            getObjects(function (err, res) {
+                if (err) {
                     console.log(err);
                 } else {
                     updateActiveRules(namespace, res);
@@ -264,13 +269,13 @@
         }
 
         function updateActiveRules(namespace, res) {
-            let v_url = location.protocol + '//' + location.hostname+(location.port ? ':'+location.port: '');
+            let v_url = location.protocol + '//' + location.hostname + (location.port ? ':' + location.port : '');
             let table_html = '';
             ids_arr = [];
 
             for (let i = 0; i < res.rows.length; i++) {
                 let obj = res.rows[i];
-                
+
                 if (obj && obj.id) {
                     ids_arr.push(obj.id);
                 }
@@ -280,13 +285,13 @@
                     table_html += '<tr>';
                     table_html += '<td id="id"><a href="' + v_url + '/#tab-objects/customs/' + obj.id + '" target=_blank>' + obj.id + '</a></td>';
                     let enabled = getValue(custom.enabled);
-                    if(enabled) {
+                    if (enabled) {
                         table_html += '<td><input id="enabled" style="width: 40px" class="filled-in" type="checkbox" checked><span></span></td>';
                     } else {
                         table_html += '<td><input id="enabled" style="width: 40px" class="filled-in" type="checkbox"><span></span></td>';
                     }
                     let ignoreAck = getValue(custom.ignoreAck);
-                    if(ignoreAck) {
+                    if (ignoreAck) {
                         table_html += '<td><input id="ignoreAck" style="width: 40px" class="filled-in" type="checkbox" checked><span></span></td>';
                     } else {
                         table_html += '<td><input id="ignoreAck" style="width: 40px" class="filled-in" type="checkbox"><span></span></td>';
@@ -311,14 +316,14 @@
             });
 
             $("#rules-active-table td[id='rule']").autocomplete({
-                source: function(request, response) {
+                source: function (request, response) {
                     var results = $.ui.autocomplete.filter(rules_arr, request.term);
                     response(results.slice(0, 10));
                 }
             });
 
             $("#rules-active-table td[id='input'], #rules-active-table td[id='output'], #rules-active-table td[id='io']").autocomplete({
-                source: function(request, response) {
+                source: function (request, response) {
                     var results = $.ui.autocomplete.filter(ids_arr, request.term);
                     response(results.slice(0, 10));
                 }
@@ -339,7 +344,7 @@
             if (value) return value; else return '';
         }
 
-        function saveObjects(namespace, res) {
+        function saveObjects(namespace, res, callback) {
             let objects = {};
             for (let i = 0; i < res.rows.length; i++) {
                 let obj = res.rows[i];
@@ -349,58 +354,60 @@
             }
 
             $('#rules-active-table tr').each(function () {
-                 let id = $(this).find("td[id='id']").text();
-                 if (id && objects.hasOwnProperty(id)) {
+                let id = $(this).find("td[id='id']").text();
+                if (id && objects.hasOwnProperty(id)) {
                     //console.log(id);
-                     if ($(this).css('display') != 'none') {
-                         let obj2 = { common: { custom: {} } };
-                         let custom = obj2.common.custom[namespace] = {};
-                         let enabled = $(this).find("input[id='enabled']").prop('checked');
-                         custom.enabled = enabled === true;
-                         let ignoreAck = $(this).find("input[id='ignoreAck']").prop('checked');
-                         custom.ignoreAck = ignoreAck === true;
-                         custom.input = $(this).find("td[id='input']").text();
-                         custom.output = $(this).find("td[id='output']").text();
-                         custom.io = $(this).find("td[id='io']").text();
-                         custom.rule = $(this).find("td[id='rule']").text();
-                         custom.correction = $(this).find("td[id='correction']").text();
+                    if ($(this).css('display') != 'none') {
+                        let obj2 = { common: { custom: {} } };
+                        let custom = obj2.common.custom[namespace] = {};
+                        let enabled = $(this).find("input[id='enabled']").prop('checked');
+                        custom.enabled = enabled === true;
+                        let ignoreAck = $(this).find("input[id='ignoreAck']").prop('checked');
+                        custom.ignoreAck = ignoreAck === true;
+                        custom.input = $(this).find("td[id='input']").text();
+                        custom.output = $(this).find("td[id='output']").text();
+                        custom.io = $(this).find("td[id='io']").text();
+                        custom.rule = $(this).find("td[id='rule']").text();
+                        custom.correction = $(this).find("td[id='correction']").text();
 
-                         let isSame = true;
-                         let obj_now = objects[id].value;
-                         if (obj_now.hasOwnProperty('custom') && obj_now.custom.hasOwnProperty(namespace)) {
-                             let custom_now = objects[id].value.custom[namespace];
-                             for (let k in custom) {
-                                 if (custom.hasOwnProperty(k) && custom_now.hasOwnProperty(k)) {
-                                     if (custom[k] != custom_now[k]) {
-                                         isSame = false;
-                                         break;
-                                     }
-                                 } else if (custom.hasOwnProperty(k) && !custom_now.hasOwnProperty(k)) {
+                        let isSame = true;
+                        let obj_now = objects[id].value;
+                        if (obj_now.hasOwnProperty('custom') && obj_now.custom.hasOwnProperty(namespace)) {
+                            let custom_now = objects[id].value.custom[namespace];
+                            for (let k in custom) {
+                                if (custom.hasOwnProperty(k) && custom_now.hasOwnProperty(k)) {
+                                    if (custom[k] != custom_now[k]) {
+                                        isSame = false;
+                                        break;
+                                    }
+                                } else if (custom.hasOwnProperty(k) && !custom_now.hasOwnProperty(k)) {
                                     isSame = false;
                                     break;
-                                 }
-                             }
-                         } else {
-                             isSame = false;
-                         }
+                                }
+                            }
+                        } else {
+                            isSame = false;
+                        }
 
-                         if (!isSame) {
-                             socket.emit('extendObject', id, obj2, function () {
-                                 //console.log('update id: ' + id);
-                             });
-                         }
-                     } else {
-                        let obj = objects[id];
-                        obj.common = obj.value;
-                        delete obj['value'];
-                        delete obj.common.custom[namespace];
-                        obj.type = "state";
-                        socket.emit('setObject', id, obj, function () {
-                            //console.log('setObject id: ' + id);
+                        if (!isSame) {
+                            socket.emit('extendObject', id, obj2, function () {
+                                //console.log('update id: ' + id);
+                                callback && callback();
+                            });
+                        }
+                    } else {
+                        socket.emit('getObject', id, function (err, obj) {
+                            if (err) console.log(err);
+                            obj.common.custom[namespace] = null
+                            socket.emit('setObject', id, obj, function (err) {
+                                if (err) console.log(err);
+                                callback && callback();
+                            });
+
                         });
-                     }
-                 }
-             });
+                    }
+                }
+            });
         }
 
         function save(callback) {
@@ -438,7 +445,7 @@
                         table_json[ruleName].deviation = vdeviation;
                         table_json[ruleName].mapping = {};
                     }
-                    
+
                     if (oldState && newState) {
                         let obj = {};
                         obj[oldState] = newState;
@@ -449,8 +456,8 @@
 
             obj.rules = JSON.stringify(table_json);
 
-            getObjects(function(err, res) {
-                if(err) {
+            getObjects(function (err, res) {
+                if (err) {
                     console.log(err);
                 } else {
                     saveObjects(namespace, res);
@@ -469,7 +476,8 @@
                 <div class="col s12">
                     <ul class="tabs">
                         <!--<li class="tab col s3"><a href="#tab-main" class="translate active">Main settings</a></li>-->
-                        <li class="tab col s3"><a href="#tab-mapping-rules" class="translate active" id="messages">Mapping rules</a></li>
+                        <li class="tab col s3"><a href="#tab-mapping-rules" class="translate active"
+                                id="messages">Mapping rules</a></li>
                         <li class="tab col s3"><a href="#tab-active-rules" class="translate">Active rules</a></li>
                     </ul>
                 </div>
@@ -480,8 +488,9 @@
                     <textarea id="rules" class="value materialize-textarea mappingrules"></textarea>
                     <label for="rules">Message</label>-->
                     <div id="rules-container">
-                        <br/>
-                        <span style="font-size: larger;" class="translate">Add rule: </span><a class="btn-floating waves-effect waves-light blue table-button-add-rule">
+                        <br />
+                        <span style="font-size: larger;" class="translate">Add rule: </span><a
+                            class="btn-floating waves-effect waves-light blue table-button-add-rule">
                             <i class="material-icons">add</i></a>
                         <table id="rules-table">
                             <thead>
@@ -517,8 +526,9 @@
                             </thead>
                             <tbody></tbody>
                         </table>
-                        <br/>
-                        <span style="font-size: larger;" class="translate">Add object: </span><a class="btn-floating waves-effect waves-light blue table-button-add-object">
+                        <br />
+                        <span style="font-size: larger;" class="translate">Add object: </span><a
+                            class="btn-floating waves-effect waves-light blue table-button-add-object">
                             <i class="material-icons">add</i></a>
                     </div>
                 </div>

@@ -92,17 +92,18 @@
     "license": "MIT",
     "messagebox": false,
     "stopTimeout": 5000,
-    "installedFrom": "https://github.com/shady2k/ioBroker.state-mapping/tarball/45adf92f654917cb70490c09d336246bd6c75bf2"
-  },
-  "dependencies": [
-    {
-      "js-controller": ">=3.3.0"
-    }
-  ],
-  "adminUI": {
-    "custom": "json",
-    "config": "materialize"
-  },
-  "native": {},
-  "objects": []
+    "dependencies": [
+      {
+        "js-controller": ">=3.3.0"
+      }
+    ],
+    "adminUI": {
+      "custom": "json",
+      "config": "materialize"
+    },
+    "native": {
+      "rules": {}
+    },
+    "objects": []
+  }
 }
